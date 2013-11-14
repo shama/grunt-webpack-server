@@ -16,6 +16,7 @@ module.exports = function(grunt) {
   var connect = require('connect');
 
   grunt.registerMultiTask('webpack_server', 'Fire up a webpack dev server.', function() {
+    var done = this.async();
     var options = this.options({
       entry: './index.js',
       output: {
@@ -24,11 +25,17 @@ module.exports = function(grunt) {
       port: 8000,
       keepalive: false,
     });
+    var keepAlive = this.flags.keepalive || options.keepalive;
     var base = path.dirname(options.entry);
     var app = connect()
       .use(connect.directory(base))
       .use(connect.static(base))
-      .use(middleware(webpack(options)));
+      .use(middleware(webpack(options, function(err, stats) {
+        // TODO: This logs twice for some reason?
+        if (!keepAlive) {
+          done();
+        }
+      })));
 
     // if index.html doesnt exist
     if (!grunt.file.exists(path.join(base, 'index.html'))) {
@@ -40,11 +47,5 @@ module.exports = function(grunt) {
     }
 
     app.listen(options.port);
-
-    // if keepalive forever
-    if (options.keepalive === true || Array.prototype.slice.call(arguments, -1)[0] === 'keepalive') {
-      this.async();
-    }
   });
-
 };
