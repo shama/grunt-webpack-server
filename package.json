@@ -1,7 +1,7 @@
 {
   "name": "grunt-webpack-server",
   "description": "Fire up a webpack dev server with Grunt.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/Kyle/grunt-webpack-server",
   "author": {
     "name": "Kyle Robinson Young",
